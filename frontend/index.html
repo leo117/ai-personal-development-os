@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Personal Development OS - 个人成长与能力发展操作系统</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles/main.css">
+</head>
+<body>
+
+  <!-- Top Header Navigation -->
+  <header class="app-header">
+    <div class="logo-area">
+      <span class="logo-badge">DEV OS</span>
+      <span class="logo-title">AI Personal Development OS</span>
+      <span style="font-size: 11px; background: rgba(16, 185, 129, 0.15); color: #10b981; padding: 2px 6px; border-radius: 4px; border: 1px solid rgba(16, 185, 129, 0.3);">Phase 1 MVP</span>
+    </div>
+
+    <div class="header-metrics">
+      <div class="metric-pill">
+        <span>北极星指标 (ICG):</span>
+        <strong id="header-icg-val">+3.2/周</strong>
+      </div>
+      <div class="metric-pill">
+        <span>AI 依赖指数 (ADI):</span>
+        <strong id="header-adi-val" style="color: #10b981;">25%</strong>
+      </div>
+      <button id="open-radar-btn" class="btn-header">🕸️ 技能图谱与 FSRS</button>
+      <button id="open-research-btn" class="btn-header">📊 科研与去依赖看板</button>
+    </div>
+  </header>
+
+  <!-- Task Selector Sub-bar -->
+  <div style="padding: 12px 24px 0 24px; max-width: 1720px; margin: 0 auto; width: 100%;">
+    <div id="task-selector-tabs" class="task-selector-bar">
+      <!-- 动态注入任务 Tabs -->
+    </div>
+  </div>
+
+  <!-- Dual-Pane Workspace -->
+  <main class="workspace-container">
+    <!-- Left Pane: Production Canvas -->
+    <section class="panel">
+      <div class="panel-header">
+        <div class="panel-title">
+          <span>🛠️</span>
+          <span>真实生产画布 (Production Canvas & Deliverables)</span>
+        </div>
+        <span style="font-size: 11px; color: #94a3b8;">Authentic Assessment Ready</span>
+      </div>
+      <div class="panel-body" id="production-canvas-root">
+        <!-- 动态注入生产画布 -->
+      </div>
+    </section>
+
+    <!-- Right Pane: AI Coach & Scaffolding Console -->
+    <section class="panel">
+      <div class="panel-header">
+        <div class="panel-title">
+          <span>🧠</span>
+          <span>AI 动态支架陪练控制台 (Scaffolding Coach)</span>
+        </div>
+        <span style="font-size: 11px; color: #10b981;">● Active Policy Engine</span>
+      </div>
+      <div class="panel-body" id="coach-console-root">
+        <!-- 动态注入陪练与能量条控制台 -->
+      </div>
+    </section>
+  </main>
+
+  <!-- Competency Radar & FSRS Modal -->
+  <div id="radar-modal" class="modal-overlay">
+    <div class="modal-content" id="radar-modal-body">
+      <!-- 动态注入图谱数据 -->
+    </div>
+  </div>
+
+  <!-- Research Metrics Modal -->
+  <div id="research-modal" class="modal-overlay">
+    <div class="modal-content" id="research-modal-body">
+      <!-- 动态注入科研指标 -->
+    </div>
+  </div>
+
+  <script type="module" src="./js/app.js"></script>
+</body>
+</html>

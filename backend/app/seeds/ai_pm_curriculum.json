@@ -1,0 +1,54 @@
+{
+  "domain": "AI_Product_Management",
+  "title": "AI 产品经理 (AI PM) 12 周核心能力培养图谱",
+  "competencies": [
+    {
+      "competency_id": "ai_pm.fundamentals",
+      "title": "LLM 核心原理与边界认知",
+      "description": "理解大模型 Token、Context Window、幻觉成因与适用场景评估",
+      "bloom_level": "UNDERSTAND",
+      "difficulty_rating": 35.0,
+      "task": {
+        "title": "智能客服场景 LLM 可行性评估与 PRD",
+        "problem_statement": "某电商公司希望引入大模型重构智能客服。请撰写一份可行性分析 PRD，重点论证哪些问题适合大模型处理，哪些规则场景严禁使用大模型，并计算预期 ROI。",
+        "rubrics": "必须包含：1. 场景边界分类；2. 幻觉与越狱防范机制；3. 预期成本与响应延迟估算。"
+      }
+    },
+    {
+      "competency_id": "ai_pm.rag_architecture",
+      "title": "企业级 RAG 检索增强架构设计",
+      "description": "掌握多路召回、混合检索、分块策略与 Cross-Encoder 重排选型",
+      "bloom_level": "ANALYZE",
+      "difficulty_rating": 65.0,
+      "task": {
+        "title": "法律合规文档垂类 RAG 系统架构设计",
+        "problem_statement": "针对包含 10 万份复杂合同的法律知识库，设计端到端 RAG 检索方案。解决长文档分块断裂、专业术语召回率低以及多版本条款冲突难题。",
+        "rubrics": "必须包含：1. 分块与元数据标记策略；2. 密集与稀疏混合检索算法；3. 召回准确率评估方案。"
+      }
+    },
+    {
+      "competency_id": "ai_pm.prompt_and_eval",
+      "title": "自动化 Eval 评估基准与测试集构建",
+      "description": "建立严密的评测指标集、构建 Corner Cases 并设计自动化打分流水线",
+      "bloom_level": "EVALUATE",
+      "difficulty_rating": 75.0,
+      "task": {
+        "title": "构建 100 条真实测试集与自动化评估流水线",
+        "problem_statement": "为金融投研问答 Agent 设计测试基准。在无 AI 辅助下独立构造 10 条高难度边界测试用例（含时效性冲突、歧义指令），并编写评估打分脚本。",
+        "rubrics": "必须包含：1. 黄金测试集标准；2. 准确性与忠实度量化指标；3. 自动化评测 Pipeline 架构。"
+      }
+    },
+    {
+      "competency_id": "ai_pm.agent_workflow",
+      "title": "多智能体协作与状态机设计",
+      "description": "设计确定性状态流转、并发冲突防御、上下文窗口压缩与 Agent Handoff 机制",
+      "bloom_level": "CREATE",
+      "difficulty_rating": 85.0,
+      "task": {
+        "title": "多 Agent 协同行业研报生成系统架构",
+        "problem_statement": "设计由搜集 Agent、分析 Agent、图表生成 Agent 和审查 Agent 组成的多智能体研报系统。定义状态转移图与死锁防御策略。",
+        "rubrics": "必须包含：1. 状态机迁移规范；2. 拦截与人工审核断点机制；3. 错误恢复与超时熔断。"
+      }
+    }
+  ]
+}
