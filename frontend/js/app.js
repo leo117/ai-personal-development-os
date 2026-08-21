@@ -5,6 +5,7 @@ import { renderCoachConsole } from './components/coach_console.js';
 import { renderCompetencyModal } from './components/competency_radar.js';
 import { renderResearchModal } from './components/research_metrics.js';
 import { renderNewTaskModal } from './components/new_task_modal.js';
+import { renderTaskList } from './components/task_list.js';
 
 // 全局应用状态
 const state = {
@@ -44,10 +45,7 @@ function renderAll() {
     canvasRoot.innerHTML = renderProductionCanvas(currentTask, state.isNoAiMode);
   }
 
-  // 2. 渲染任务切换标签
-  renderTaskTabs();
-
-  // 3. 渲染右侧 AI 陪练控制台
+  // 2. 渲染中间 AI 陪练控制台
   const coachRoot = document.getElementById("coach-console-root");
   if (coachRoot) {
     coachRoot.innerHTML = renderCoachConsole(state.messages, state.currentLevel, state.isNoAiMode);
@@ -58,6 +56,9 @@ function renderAll() {
       budgetRoot.innerHTML = renderBudgetBar(state.currentBudget, state.currentLevel);
     }
   }
+
+  // 3. 渲染右侧任务挑战列表
+  renderRightTaskList();
 
   // 4. 更新顶部指标
   if (state.researchMetrics) {
@@ -75,35 +76,55 @@ function renderAll() {
   bindPanelEvents();
 }
 
-function renderTaskTabs() {
-  const tabsContainer = document.getElementById("task-selector-tabs");
-  if (!tabsContainer) return;
+function renderRightTaskList() {
+  const taskListRoot = document.getElementById("task-list-root");
+  const countBadge = document.getElementById("task-list-count");
 
-  const taskTabsHtml = state.tasks.map((t, idx) => `
-    <button class="task-tab ${idx === state.currentTaskIndex ? 'active' : ''}" data-index="${idx}">
-      Week ${t.week_number}: ${t.title.length > 14 ? t.title.substring(0, 14) + '...' : t.title}
-    </button>
-  `).join("");
+  if (countBadge) {
+    countBadge.innerText = `${state.tasks.length} 个挑战`;
+  }
 
-  const addBtnHtml = `
-    <button id="open-new-task-btn" class="btn-add-task" title="添加新挑战或通过 AI 智能自适应生成">
-      <span>✨</span>
-      <span>+ 新建 / AI 出题</span>
-    </button>
-  `;
+  if (!taskListRoot) return;
+  taskListRoot.innerHTML = renderTaskList(state.tasks, state.currentTaskIndex);
 
-  tabsContainer.innerHTML = taskTabsHtml + addBtnHtml;
-
-  tabsContainer.querySelectorAll(".task-tab").forEach(btn => {
-    btn.addEventListener("click", () => {
-      state.currentTaskIndex = parseInt(btn.dataset.index);
+  // 绑定点击任务切换
+  taskListRoot.querySelectorAll(".task-list-item").forEach(item => {
+    item.addEventListener("click", () => {
+      state.currentTaskIndex = parseInt(item.dataset.index);
       state.currentBudget = 100; // 重置任务初始预算
       renderAll();
     });
   });
 
-  // 绑定打开新建任务弹窗按钮
-  document.getElementById("open-new-task-btn")?.addEventListener("click", openNewTaskModal);
+  // 绑定删除任务按钮
+  taskListRoot.querySelectorAll(".delete-task-btn").forEach(btn => {
+    btn.addEventListener("click", async (e) => {
+      e.stopPropagation();
+      const taskId = btn.dataset.taskId;
+      const taskTitle = btn.dataset.taskTitle || "该挑战";
+      if (!taskId) return;
+
+      if (confirm(`🗑️ 确定要删除挑战「${taskTitle}」吗？\n删除后将从挑战列表与当前工作区中移除。`)) {
+        try {
+          const resp = await api.deleteTask(taskId);
+          if (resp.status === "SUCCESS") {
+            // 重新拉取最新任务列表
+            state.tasks = await api.getTasks();
+            state.graphData = await api.getCompetencyGraph();
+            
+            // 调整当前选中的索引，避免越界
+            if (state.currentTaskIndex >= state.tasks.length) {
+              state.currentTaskIndex = Math.max(0, state.tasks.length - 1);
+            }
+            state.currentBudget = 100;
+            renderAll();
+          }
+        } catch (err) {
+          alert("删除任务失败，请检查网络或后端服务。");
+        }
+      }
+    });
+  });
 }
 
 function bindPanelEvents() {
@@ -384,6 +405,9 @@ function bindGlobalEvents() {
       researchModal?.classList.remove("active");
     });
   });
+
+  // 新建任务 / AI 智能出题 Modal (仅保留顶部常驻按钮)
+  document.getElementById("header-new-task-btn")?.addEventListener("click", openNewTaskModal);
 }
 
 // 启动应用

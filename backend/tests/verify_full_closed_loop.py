@@ -133,10 +133,18 @@ def run_full_audit():
     assert res_metrics.status_code == 200
     metrics_data = res_metrics.json()
     assert metrics_data["total_evidences_count"] >= 1
-    print(f"✅ [9/9] 科研量化与去依赖闭环: 累计证据链 {metrics_data['total_evidences_count']} 条, ADI={(metrics_data['ai_dependency_index']*100):.1f}%, ICG=+{metrics_data['independent_capability_growth']}/周, SCE={metrics_data['scaffolding_efficiency']}")
+    print(f"✅ [9/10] 科研量化与去依赖闭环: 累计证据链 {metrics_data['total_evidences_count']} 条, ADI={(metrics_data['ai_dependency_index']*100):.1f}%, ICG=+{metrics_data['independent_capability_growth']}/周, SCE={metrics_data['scaffolding_efficiency']}")
+
+    # 10. Task Deletion Closed Loop
+    res_del = client.delete(f"/api/v1/tasks/{new_task_id}")
+    assert res_del.status_code == 200 and res_del.json()["status"] == "SUCCESS"
+    res_del_verify = client.get("/api/v1/tasks/")
+    remaining_tasks = res_del_verify.json()
+    assert not any(t["task_id"] == new_task_id for t in remaining_tasks)
+    print(f"✅ [10/10] 任务全生命周期删除闭环: 成功物理移除任务 {new_task_id}，列表自动同步")
 
     print("=" * 65)
-    print("🎉 全系统 9 大维度功能核验 100% 成功，全链路数据与状态机完全闭环！")
+    print("🎉 全系统 10 大维度功能核验 100% 成功，全链路数据与状态机完全闭环！")
     print("=" * 65)
 
 if __name__ == "__main__":

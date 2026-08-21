@@ -76,5 +76,13 @@ export const api = {
       body: JSON.stringify(payload)
     });
     return await res.json();
+  },
+
+  // 删除任务
+  async deleteTask(taskId) {
+    const res = await fetch(`${API_BASE}/tasks/${taskId}`, {
+      method: "DELETE"
+    });
+    return await res.json();
   }
 };

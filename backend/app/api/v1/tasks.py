@@ -192,6 +192,19 @@ def create_task(req: TaskCreateRequest, db: Session = Depends(get_session)):
         }
     }
 
+@router.delete("/{task_id}")
+def delete_task(task_id: str, db: Session = Depends(get_session)):
+    """
+    删除指定的任务挑战
+    """
+    task = db.exec(select(AuthenticTask).where(AuthenticTask.task_id == task_id)).first()
+    if not task:
+        raise HTTPException(status_code=404, detail="Task not found")
+
+    db.delete(task)
+    db.commit()
+    return {"status": "SUCCESS", "message": f"Task {task_id} deleted successfully"}
+
 @router.post("/submit", response_model=SubmissionResponse)
 def submit_task_deliverable(req: SubmissionRequest, db: Session = Depends(get_session)):
     task = db.exec(select(AuthenticTask).where(AuthenticTask.task_id == req.task_id)).first()

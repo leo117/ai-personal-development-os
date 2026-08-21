@@ -95,13 +95,29 @@ class TestAPIEndpoints(unittest.TestCase):
         self.assertIn("task", data)
         self.assertGreaterEqual(data["task"]["week_number"], 5)
 
-    def test_research_metrics(self):
-        response = self.client.get("/api/v1/research/metrics?user_id=usr_demo_01")
-        self.assertEqual(response.status_code, 200)
-        data = response.json()
-        self.assertIn("ai_dependency_index", data)
-        self.assertIn("scaffolding_efficiency", data)
-        self.assertIn("independent_capability_growth", data)
+    def test_delete_task(self):
+        # 创建一个临时任务用于测试删除
+        create_payload = {
+            "user_id": "usr_demo_01",
+            "title": "临时测试任务用于删除验证",
+            "problem_statement": "用于单元测试任务删除闭环",
+            "rubrics": "必须包含测试标准",
+            "difficulty_score": 60.0,
+            "bloom_level": "APPLY",
+            "competency_title": "临时测试技能"
+        }
+        res_create = self.client.post("/api/v1/tasks/", json=create_payload)
+        self.assertEqual(res_create.status_code, 200)
+        task_id = res_create.json()["task"]["task_id"]
+
+        # 执行删除
+        res_del = self.client.delete(f"/api/v1/tasks/{task_id}")
+        self.assertEqual(res_del.status_code, 200)
+        self.assertEqual(res_del.json()["status"], "SUCCESS")
+
+        # 再次尝试删除返回 404
+        res_del_404 = self.client.delete(f"/api/v1/tasks/{task_id}")
+        self.assertEqual(res_del_404.status_code, 404)
 
 if __name__ == "__main__":
     unittest.main()

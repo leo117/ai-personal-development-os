@@ -30,24 +30,21 @@
       </div>
       <button id="open-radar-btn" class="btn-header">🕸️ 技能图谱与 FSRS</button>
       <button id="open-research-btn" class="btn-header">📊 科研与去依赖看板</button>
+      <button id="header-new-task-btn" class="btn-primary" style="padding: 7px 14px; font-size: 12px; font-weight: 700; display: flex; align-items: center; gap: 6px; box-shadow: 0 0 12px var(--primary-glow); cursor: pointer;">
+        <span>✨</span>
+        <span>AI 智能出题 / 新建</span>
+      </button>
     </div>
   </header>
 
-  <!-- Task Selector Sub-bar -->
-  <div style="padding: 12px 24px 0 24px; max-width: 1720px; margin: 0 auto; width: 100%;">
-    <div id="task-selector-tabs" class="task-selector-bar">
-      <!-- 动态注入任务 Tabs -->
-    </div>
-  </div>
-
-  <!-- Dual-Pane Workspace -->
+  <!-- 3-Pane Workspace -->
   <main class="workspace-container">
     <!-- Left Pane: Production Canvas -->
     <section class="panel">
       <div class="panel-header">
         <div class="panel-title">
           <span>🛠️</span>
-          <span>真实生产画布 (Production Canvas & Deliverables)</span>
+          <span>真实生产画布 (Production Canvas)</span>
         </div>
         <span style="font-size: 11px; color: #94a3b8;">Authentic Assessment Ready</span>
       </div>
@@ -56,17 +53,31 @@
       </div>
     </section>
 
-    <!-- Right Pane: AI Coach & Scaffolding Console -->
+    <!-- Center Pane: AI Coach & Scaffolding Console -->
     <section class="panel">
       <div class="panel-header">
         <div class="panel-title">
           <span>🧠</span>
-          <span>AI 动态支架陪练控制台 (Scaffolding Coach)</span>
+          <span>AI 动态支架陪练 (Scaffolding Coach)</span>
         </div>
         <span style="font-size: 11px; color: #10b981;">● Active Policy Engine</span>
       </div>
       <div class="panel-body" id="coach-console-root">
         <!-- 动态注入陪练与能量条控制台 -->
+      </div>
+    </section>
+
+    <!-- Right Pane: Task Challenges List -->
+    <section class="panel task-list-panel">
+      <div class="panel-header">
+        <div class="panel-title">
+          <span>📋</span>
+          <span>任务与挑战列表</span>
+        </div>
+        <span id="task-list-count" style="font-size: 11px; background: rgba(59, 130, 246, 0.15); color: #60a5fa; padding: 2px 8px; border-radius: 12px; font-weight: 600;">0 个挑战</span>
+      </div>
+      <div class="panel-body task-list-body" id="task-list-root">
+        <!-- 动态注入右侧垂直任务列表 -->
       </div>
     </section>
   </main>

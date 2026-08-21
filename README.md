@@ -51,98 +51,185 @@
 
 ---
 
-## 2. AI 模型与 API 接口配置
+## 2. AI 模型与 API ## 3. Web 三栏沉浸式工作区核心功能操作指南
 
-系统采用标准 `.env` 环境变量配置大模型，**兼容所有 OpenAI 协议接口**。
-
-### ⚙️ 配置文件位置：根目录 [`.env`](./.env)
-
-打开根目录下的 `.env` 文件，填入对应服务商参数即可：
-
-#### ① 配置 DeepSeek (官方 API)
-```ini
-LLM_API_KEY=sk-your-deepseek-api-key
-LLM_API_BASE=https://api.deepseek.com/v1
-LLM_MODEL_NAME=deepseek-chat
-```
-
-#### ② 配置 OpenAI (官方 API)
-```ini
-LLM_API_KEY=sk-your-openai-api-key
-LLM_API_BASE=https://api.openai.com/v1
-LLM_MODEL_NAME=gpt-4o
-```
-
-#### ③ 配置 硅基流动 (SiliconFlow / 国内高可用代理)
-```ini
-LLM_API_KEY=sk-your-siliconflow-api-key
-LLM_API_BASE=https://api.siliconflow.cn/v1
-LLM_MODEL_NAME=deepseek-ai/DeepSeek-V3
-```
-
-#### ④ 配置 本地 Ollama (完全离线与本地部署)
-```ini
-LLM_API_KEY=ollama
-LLM_API_BASE=http://localhost:11434/v1
-LLM_MODEL_NAME=qwen2.5:7b
-```
-
-> **💡 智能兜底机制**：若 `LLM_API_KEY` 留空，系统不会报错，而是自动启用内置的教育策略模板引擎生成受控响应。
-
----
-
-## 3. Web 双工作区核心功能操作指南
-
-打开浏览器访问 [http://localhost:8000/](http://localhost:8000/) 即可进入现代双工作区：
+打开浏览器访问 [http://localhost:8000/](http://localhost:8000/) 即可进入现代三栏沉浸式工作台：
 
 ```
-┌────────────────────────────────────────────────────────────────────────────────────────┐
-│ 顶栏：北极星指标 ICG (+3.2/周) | AI 依赖指数 ADI (25%) | [🕸️ 技能图谱与FSRS] | [📊 科研看板]  │
-├────────────────────────────────────────────────────────────────────────────────────────┤
-│ 任务标签栏：[Week 1: 客服场景] [Week 2: RAG架构] [Week 3: Eval] [Week 4: Agent] [✨ +新建/AI出题] │
-├──────────────────────────────────────────┬─────────────────────────────────────────────┤
-│ 🛠️ 左侧：真实生产画布 (Production Canvas)  │ 🧠 右侧：AI 动态支架陪练控制台 (Coach Console)│
-│                                          │                                             │
-│ 1. 任务背景与 Evidence Contract 评测标准 │ 1. ⚡ Assistance Budget 能量条 (100点动态扣减)│
-│ 2. Markdown 方案/PRD/代码编辑器          │ 2. 支架强度选择：Q1反问 / Q2提示 / Q3类比 / Q4骨架│
-│ 3. [🔒 进入无 AI 独立评估模式] 按钮      │ 3. 苏格拉底式启发对话流 (含 Guardrail 拦截标签)│
-│ 4. [🚀 提交交付物并申请 Authentic 评估]  │ 4. 问题输入框与快速提问                     │
-└──────────────────────────────────────────┴─────────────────────────────────────────────┘
+┌────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│ 顶栏：北极星指标 ICG (+3.7/周) | AI 依赖指数 ADI (5%) | [🕸️ 技能图谱与FSRS] | [📊 科研看板] | [✨ AI 智能出题] │
+├──────────────────────────────────┬─────────────────────────────────────┬───────────────────────────────┤
+│ 🛠️ 左侧：真实生产画布 (Canvas)    │ 🧠 中间：AI 动态支架陪练控制台 (Coach)│ 📋 右侧：任务与挑战列表 (Tasks)│
+│                                  │                                     │                               │
+│ 1. 业务痛点与 Evidence 评测规准   │ 1. ⚡ Assistance Budget 能量条 (100)│ 1. 任务挑战卡片与 Week 标签   │
+│ 2. Markdown 方案/PRD/架构编辑器  │ 2. 支架强度选择：Q1反问/Q2提示/Q3类比│ 2. Bloom 认知层级与难度分     │
+│ 3. [🔒 进入无 AI 独立评估模式]   │ 3. 苏格拉底启发对话与 Guardrail 防护 │ 3. 当前挑战激活与呼吸高亮指示 │
+│ 4. [🚀 提交交付物并申请评测]     │ 4. 问题输入框与快速提问             │ 4. 🗑️ 任务一键确认删除        │
+└──────────────────────────────────┴─────────────────────────────────────┴───────────────────────────────┘
 ```
 
 ### 1. 真实方案撰写与交付 (左侧画布)
-- **切换任务**：点击顶部的 Week 标签，自动载入对应的真实业务背景与评分规准（Rubrics）。
-- **撰写方案**：在中间的 Markdown 编辑器中撰写 PRD、架构设计或代码方案。
+- **查看任务**：在右侧列表点击任意任务，左侧画布自动载入对应的真实业务背景与评分规准（Rubrics）。
+- **撰写方案**：在中间的 Markdown 编辑器中撰写 PRD、架构设计或工程方案。
 - **提交评估**：点击 **“🚀 提交交付物并申请 Authentic 评估”**，系统将自动调用 Assessment Agent 进行多维度客观打分（技术严密性、权衡分析、掌握度跃迁）。
 
-### 2. 动态支架陪练与能量管理 (右侧控制台)
+### 2. 动态支架陪练与能量管理 (中间控制台)
 - **能量条机制**：每个任务初始赋予 **100 点支架能量**。
 - **阶梯提问**：
   - `Q1: 反问启发 (10点)`：AI 提出关键矛盾与反思点，引导自我探索。
   - `Q2: 策略提示 (25点)`：AI 给出解题策略方向（如分阶段检索与重排）。
   - `Q3: 场景类比 (50点)`：AI 给出跨领域的直观类比案例。
   - `Q4: 骨架填空 (80点)`：AI 给出带 `TODO` 槽位的代码/文档框架。
-- **拦截保护 (Scaffolding Guard)**：若 AI 试图直接给出完整答案或代码，拦截器会自动折叠代码块并提示先自行尝试。
+- **拦截保护 (Scaffolding Guard)**：若 AI 试图直接给出完整答案或代码，拦截器会自动阻断并提示先自行尝试。
 - **能量耗尽熔断**：当能量降为 0 时，AI 强制进入冷凝状态，鼓励独立完成。
 
-### 3. 无 AI 独立测试模式 (No-AI Assessment)
-- 点击左下角 **“🔒 进入无 AI 独立评估模式”**，系统会切断右侧 AI 对话通道。
+### 3. 右侧任务挑战列表与全生命周期管理 (右侧面板)
+- **纵向挑战路线**：展示所有周次的 Authentic 挑战，包含 Week 序号、认知层级（`UNDERSTAND` 至 `CREATE`）及难度评分。
+- **即时切换**：点击任意挑战卡片即可一键切换当前工作区。
+- **🗑️ 任务一键删除**：点击任务卡片右上角的垃圾桶图标，在弹出的二次确认对话框中确认即可物理删除该挑战，列表与统计自动平滑同步。
+
+### 4. ✨ AI 智能自适应出题与新任务配置 (顶部常驻按钮)
+- 点击顶部右上角的 **“✨ AI 智能出题 / 新建”** 按钮：
+  - **AI 智能自适应生成**：输入任意技术方向（如 *LangGraph 状态机死锁防御*、*千万级 Token 降本缓存*、*多模态混合 RAG*），点击「🪄 一键生成」，AI 导师将自动生成符合工业界真实评测标准的 PRD 架构挑战与 Rubrics 标准。
+  - **手动自定义配置**：支持自主输入标题、布鲁姆认知层级、难度分与评测规准。
+  - **即刻上架生效**：点击「🚀 立即发布并加入工作台」后，系统自动生成新周次并关联技能图谱与自适应工作台，无需重启服务即可即刻开始挑战！
+
+### 5. 无 AI 独立测试模式 (No-AI Assessment)
+- 点击左下角 **“🔒 进入无 AI 独立评估模式”**，系统会切断中间 AI 对话通道。
 - 在此模式下提交的高质量成果将作为 **“独立能力确证（Independent Evidence）”** 记录，大幅降低您的 AI 依赖度指数。
 
-### 4. 技能图谱与 FSRS 记忆复习 (顶部弹窗)
+### 6. 技能图谱与 FSRS 记忆复习 (顶部弹窗)
 - 点击顶栏 **“🕸️ 技能图谱与 FSRS”**：
   - 查看各项技能的 8 态掌握度（`UNDERSTOOD`, `PRACTICED`, `INDEPENDENT` 等）。
   - 查看稳定性 $S$（天）与当前可提取性 $R$。
   - 当可提取性 $R < 75\%$ 时，红框预警提示触发 **FSRS 延迟微挑战**。
 
-### 5. 科研指标看板 (顶部弹窗)
+### 7. 科研指标看板 (顶部弹窗)
 - 点击顶栏 **“📊 科研与去依赖看板”**：
   - 查看 **AI 依赖指数 (ADI)**：反映独立解决与 AI 辅助表现的差距（越低越优）。
   - 查看 **独立能力增长率 (ICG)** 与 **支架转化效率 (SCE)**。
 
-### 6. ✨ 动态创建新任务与 AI 自适应智能出题
-- 点击任务栏右侧的 **“✨ + 新建 / AI 出题”** 按钮：
-  - **AI 智能自适应生成**：输入任意技术方向（如 *LangGraph 状态机死锁防御*、*千万级 Token 降本缓存*、*多模态混合 RAG*），点击「🪄 一键生成」，AI 导师将自动生成符合工业界真实评测标准的 PRD 架构挑战与 Rubrics 标准。
+---
+
+## 4. API 接口与开发者调用方法
+
+### 核心 REST API 示例
+
+#### ① 交互对话回合 (`POST /api/v1/sessions/turn`)
+```bash
+curl -X POST "http://localhost:8000/api/v1/sessions/turn" \
+     -H "Content-Type: application/json" \
+     -d '{
+       "user_id": "usr_demo_01",
+       "session_id": "sess_01",
+       "competency_id": "ai_pm.rag_architecture",
+       "task_id": "task_ai_pm_rag_architecture",
+       "user_input": "多路召回后如何去除重复项并保证低延迟？",
+       "requested_level": 2,
+       "current_budget": 100,
+       "consecutive_failures": 0
+     }'
+```
+
+#### ② 提交真实交付物 (`POST /api/v1/tasks/submit`)
+```bash
+curl -X POST "http://localhost:8000/api/v1/tasks/submit" \
+     -H "Content-Type: application/json" \
+     -d '{
+       "user_id": "usr_demo_01",
+       "task_id": "task_ai_pm_rag_architecture",
+       "deliverable_content": "## 1. 检索架构方案...\n## 2. 权衡分析...",
+       "is_no_ai_mode": true,
+       "budget_spent": 25
+     }'
+```
+
+#### ③ AI 动态自适应出题 (`POST /api/v1/tasks/ai-generate`)
+```bash
+curl -X POST "http://localhost:8000/api/v1/tasks/ai-generate" \
+     -H "Content-Type: application/json" \
+     -d '{"topic": "多模态 Agent 检索与状态机设计", "bloom_level": "CREATE", "difficulty_score": 80.0}'
+```
+
+#### ④ 删除指定任务 (`DELETE /api/v1/tasks/{task_id}`)
+```bash
+curl -X DELETE "http://localhost:8000/api/v1/tasks/task_12345678"
+```
+
+#### ⑤ 获取技能图谱与 FSRS 队列 (`GET /api/v1/competencies/graph`)
+```bash
+curl "http://localhost:8000/api/v1/competencies/graph?user_id=usr_demo_01"
+```
+
+#### ⑥ 获取科研去依赖指标 (`GET /api/v1/research/metrics`)
+```bash
+curl "http://localhost:8000/api/v1/research/metrics?user_id=usr_demo_01"
+```
+
+---
+
+## 5. 自动化测试与质量校验
+
+系统自带覆盖引擎、算法、拦截器、状态机、出题管道与删除闭环的 **18 项单元与集成自动化测试 + 10 大维度全系统闭环核验**：
+
+```powershell
+# 1. 使用虚拟环境的 pytest 执行 18 项全量单元与集成测试 (100% 通过)
+.\.venv\Scripts\python.exe -m pytest backend/tests/ -v
+
+# 2. 执行 10 大维度全系统深度闭环与状态机核验脚本
+.\.venv\Scripts\python.exe backend/tests/verify_full_closed_loop.py
+```
+
+---
+
+## 6. 任务定义、生命周期与定制管理指南
+
+### 1. 任务的定义规范 (Authentic Task Definition)
+本系统中的任务采用 **真实性评估哲学 (Authentic Assessment)**：不进行死记硬背的选择题或纯刷题，而是模拟工业界真实复杂业务痛点，要求学员交付可执行、可验证的 PRD、技术方案或代码，并通过 **证据契约 (Evidence Contract)** 进行多维度评测。
+
+每个 Authentic Task 包含以下核心数据结构：
+
+| 字段名称 | 类型 | 作用与含义 |
+| :--- | :--- | :--- |
+| `task_id` | `string` | 任务全局唯一标识符（如 `task_ai_pm_rag_architecture`）。 |
+| `week_number` | `int` | 关联的学习周次或挑战序号（自增，如 Week 1, Week 2...）。 |
+| `competency_id` | `string` | 关联的底层技能节点 ID（如 `ai_pm.rag_architecture`），挂载至技能图谱。 |
+| `title` | `string` | 任务挑战标题（如 *“法律合规文档垂类 RAG 系统架构设计”*）。 |
+| `bloom_level` | `enum` | 布鲁姆认知层级：`UNDERSTAND` (理解) / `APPLY` (应用) / `ANALYZE` (分析) / `EVALUATE` (评估) / `CREATE` (创造)。 |
+| `difficulty_score`| `float` | 任务难度基准分（0 ~ 100），与学习者的 Elo 能力分动态匹配。 |
+| `problem_statement` | `text` | 详细真实的业务痛点背景、工程约束条件与交付目标。 |
+| `rubrics` | `json` | 严谨的评测契约标准（如：1. 混合检索分块策略；2. 容灾与降级；3. 成本与延迟权衡）。 |
+| `base_assistance_budget`| `int` | 初始支架援助能量点数（默认 100 点）。 |
+
+---
+
+### 2. 任务的全生命周期管理 (Task Lifecycle)
+
+```mermaid
+graph LR
+    A[1. 任务创建/AI出题] --> B[2. 支架陪练与方案撰写]
+    B --> C[3. 交付物提交与沙箱评测]
+    C --> D[4. 技能状态跃迁与上链]
+    D --> E[5. FSRS 遗忘追踪与延迟复习]
+    A -.-> F[6. 🗑️ 任务清理与物理删除]
+```
+
+1. **出题与创建**：通过 Web 界面顶部常驻按钮、AI 导师自适应生成、JSON 批量配置或 REST API 注入。
+2. **支架陪练与撰写**：学员在生产画布撰写方案，遇到卡点向 AI Coach 索取阶梯援助并扣除能量，安全护栏防止 AI 包办。
+3. **提交与评测**：点击提交后，后端的 Assessment Agent 基于 Rubrics 进行严谨多维评分。
+4. **状态跃迁与存证**：评测通过后，该技能节点由 `UNDERSTOOD` 跃迁为 `PRACTICED` 或 `INDEPENDENT`，生成不可篡改的证据链（Evidence Record）。
+5. **FSRS 记忆追踪**：系统根据时间衰减跟踪可提取性 $R$；当 $R < 75\%$ 时触发预警并调度复习挑战。
+6. **任务管理与清理**：在右侧列表中支持一键删除过时或调试任务，实现完整的 CRUD 生命周期。
+
+---
+
+### 3. 任务的管理与添加途径
+
+#### 途径 A：Web 界面可视化管理与 AI 智能出题（最便捷）
+- 点击页面顶部右上角的 **“✨ AI 智能出题 / 新建”** 按钮。
+- **AI 智能自适应生成**：输入任意技术方向（如 *LangGraph 状态机死锁防御*、*千万级 Token 降本缓存*、*多模态混合 RAG*），点击「🪄 一键生成」，AI 导师将自动生成符合工业界真实评测标准的 PRD 架构挑战与 Rubrics 标准。
+- **即刻生效**：点击「🚀 立即发布并加入工作台」后，系统自动追加至右侧列表并关联技能图谱，无需重启服务即可即刻开始挑战！
+- **任务删除**：在右侧任务卡片右上角点击 `🗑️` 即可直接删除该挑战。�合 RAG*），点击「🪄 一键生成」，AI 导师将自动生成符合工业界真实评测标准的 PRD 架构挑战与 Rubrics 标准。
   - **手动自定义配置**：支持自主输入标题、布鲁姆认知层级、难度分与评测规准。
   - **即刻上架生效**：点击「🚀 立即发布并加入工作台」后，系统自动生成 Week 5、Week 6... 并关联技能图谱与自适应工作台，无需重启服务即可即刻开始挑战！
 
