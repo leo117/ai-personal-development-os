@@ -64,6 +64,37 @@ class TestAPIEndpoints(unittest.TestCase):
         self.assertTrue(data["is_verified_independent"])
         self.assertEqual(data["new_mastery_state"], "INDEPENDENT")
 
+    def test_ai_generate_task(self):
+        payload = {
+            "topic": "多模态 Agent 检索与状态机设计",
+            "bloom_level": "CREATE",
+            "difficulty_score": 85.0
+        }
+        response = self.client.post("/api/v1/tasks/ai-generate", json=payload)
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertIn("title", data)
+        self.assertIn("problem_statement", data)
+        self.assertIn("rubrics", data)
+        self.assertIn("competency_title", data)
+
+    def test_create_custom_task(self):
+        payload = {
+            "user_id": "usr_demo_01",
+            "title": "高并发缓存分流降本实战架构",
+            "problem_statement": "针对千万级高并发场景设计语义缓存与小模型路由方案",
+            "rubrics": "必须包含：1. 缓存淘汰策略；2. 准确率评估；3. 延迟与降级。",
+            "difficulty_score": 75.0,
+            "bloom_level": "ANALYZE",
+            "competency_title": "LLM 语义缓存与分流降本"
+        }
+        response = self.client.post("/api/v1/tasks/", json=payload)
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertEqual(data["status"], "SUCCESS")
+        self.assertIn("task", data)
+        self.assertGreaterEqual(data["task"]["week_number"], 5)
+
     def test_research_metrics(self):
         response = self.client.get("/api/v1/research/metrics?user_id=usr_demo_01")
         self.assertEqual(response.status_code, 200)

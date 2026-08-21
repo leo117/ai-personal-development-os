@@ -11,7 +11,7 @@
 3. [🖥️ Web 双工作区核心功能操作指南](#3-web-双工作区核心功能操作指南)
 4. [🔌 API 接口与开发者调用方法](#4-api-接口与开发者调用方法)
 5. [🧪 自动化测试与质量校验](#5-自动化测试与质量校验)
-6. [🎯 领域图谱与任务定制方法](#6-领域图谱与任务定制方法)
+6. [🎯 任务定义、生命周期与定制管理指南](#6-任务定义生命周期与定制管理指南)
 7. [📚 文档体系与工程规范索引](#7-文档体系与工程规范索引)
 8. [🏛️ 系统核心架构概览](#8-系统核心架构概览)
 
@@ -99,7 +99,7 @@ LLM_MODEL_NAME=qwen2.5:7b
 ┌────────────────────────────────────────────────────────────────────────────────────────┐
 │ 顶栏：北极星指标 ICG (+3.2/周) | AI 依赖指数 ADI (25%) | [🕸️ 技能图谱与FSRS] | [📊 科研看板]  │
 ├────────────────────────────────────────────────────────────────────────────────────────┤
-│ 任务标签栏：[Week 1: 客服场景LLM]  [Week 2: RAG架构设计]  [Week 3: 自动化Eval]  [Week 4: 多Agent] │
+│ 任务标签栏：[Week 1: 客服场景] [Week 2: RAG架构] [Week 3: Eval] [Week 4: Agent] [✨ +新建/AI出题] │
 ├──────────────────────────────────────────┬─────────────────────────────────────────────┤
 │ 🛠️ 左侧：真实生产画布 (Production Canvas)  │ 🧠 右侧：AI 动态支架陪练控制台 (Coach Console)│
 │                                          │                                             │
@@ -111,7 +111,7 @@ LLM_MODEL_NAME=qwen2.5:7b
 ```
 
 ### 1. 真实方案撰写与交付 (左侧画布)
-- **切换任务**：点击顶部的 Week 1 ~ Week 4 标签，自动载入对应的真实业务背景与评分规准（Rubrics）。
+- **切换任务**：点击顶部的 Week 标签，自动载入对应的真实业务背景与评分规准（Rubrics）。
 - **撰写方案**：在中间的 Markdown 编辑器中撰写 PRD、架构设计或代码方案。
 - **提交评估**：点击 **“🚀 提交交付物并申请 Authentic 评估”**，系统将自动调用 Assessment Agent 进行多维度客观打分（技术严密性、权衡分析、掌握度跃迁）。
 
@@ -139,6 +139,12 @@ LLM_MODEL_NAME=qwen2.5:7b
 - 点击顶栏 **“📊 科研与去依赖看板”**：
   - 查看 **AI 依赖指数 (ADI)**：反映独立解决与 AI 辅助表现的差距（越低越优）。
   - 查看 **独立能力增长率 (ICG)** 与 **支架转化效率 (SCE)**。
+
+### 6. ✨ 动态创建新任务与 AI 自适应智能出题
+- 点击任务栏右侧的 **“✨ + 新建 / AI 出题”** 按钮：
+  - **AI 智能自适应生成**：输入任意技术方向（如 *LangGraph 状态机死锁防御*、*千万级 Token 降本缓存*、*多模态混合 RAG*），点击「🪄 一键生成」，AI 导师将自动生成符合工业界真实评测标准的 PRD 架构挑战与 Rubrics 标准。
+  - **手动自定义配置**：支持自主输入标题、布鲁姆认知层级、难度分与评测规准。
+  - **即刻上架生效**：点击「🚀 立即发布并加入工作台」后，系统自动生成 Week 5、Week 6... 并关联技能图谱与自适应工作台，无需重启服务即可即刻开始挑战！
 
 ---
 
@@ -201,10 +207,54 @@ curl "http://localhost:8000/api/v1/research/metrics?user_id=usr_demo_01"
 
 ---
 
-## 6. 领域图谱与任务定制方法
+## 6. 任务定义、生命周期与定制管理指南
 
-如果您想拓展其他职业（例如 **AI 算法工程师**、**AI 全栈开发** 或 **AI 运营**）：
+### 1. 任务的定义规范 (Authentic Task Definition)
+本系统中的任务采用 **真实性评估哲学 (Authentic Assessment)**：不进行死记硬背的选择题或纯刷题，而是模拟工业界真实复杂业务痛点，要求学员交付可执行、可验证的 PRD、技术方案或代码，并通过 **证据契约 (Evidence Contract)** 进行多维度评测。
 
+每个 Authentic Task 包含以下核心数据结构：
+
+| 字段名称 | 类型 | 作用与含义 |
+| :--- | :--- | :--- |
+| `task_id` | `string` | 任务全局唯一标识符（如 `task_ai_pm_rag_architecture`）。 |
+| `week_number` | `int` | 关联的学习周次或挑战序号（自增，如 Week 1, Week 2...）。 |
+| `competency_id` | `string` | 关联的底层技能节点 ID（如 `ai_pm.rag_architecture`），挂载至技能图谱。 |
+| `title` | `string` | 任务挑战标题（如 *“法律合规文档垂类 RAG 系统架构设计”*）。 |
+| `bloom_level` | `enum` | 布鲁姆认知层级：`UNDERSTAND` (理解) / `APPLY` (应用) / `ANALYZE` (分析) / `EVALUATE` (评估) / `CREATE` (创造)。 |
+| `difficulty_score`| `float` | 任务难度基准分（0 ~ 100），与学习者的 Elo 能力分动态匹配。 |
+| `problem_statement` | `text` | 详细真实的业务痛点背景、工程约束条件与交付目标。 |
+| `rubrics` | `json` | 严谨的评测契约标准（如：1. 混合检索分块策略；2. 容灾与降级；3. 成本与延迟权衡）。 |
+| `base_assistance_budget`| `int` | 初始支架援助能量点数（默认 100 点）。 |
+
+---
+
+### 2. 任务的全生命周期管理 (Task Lifecycle)
+
+```mermaid
+graph LR
+    A[1. 任务创建/AI出题] --> B[2. 支架陪练与方案撰写]
+    B --> C[3. 交付物提交与沙箱评测]
+    C --> D[4. 技能状态跃迁与上链]
+    D --> E[5. FSRS 遗忘追踪与延迟复习]
+```
+
+1. **出题与创建**：通过 Web 界面、AI 导师自适应生成、JSON 批量配置或 REST API 注入。
+2. **支架陪练与撰写**：学员在生产画布撰写方案，遇到卡点向 AI Coach 索取阶梯援助并扣除能量，安全护栏防止 AI 包办。
+3. **提交与评测**：点击提交后，后端的 Assessment Agent 基于 Rubrics 进行严谨多维评分。
+4. **状态跃迁与存证**：评测通过后，该技能节点由 `UNDERSTOOD` 跃迁为 `PRACTICED` 或 `INDEPENDENT`，生成不可篡改的证据链（Evidence Record）。
+5. **FSRS 记忆追踪**：系统根据时间衰减跟踪可提取性 $R$；当 $R < 75\%$ 时触发预警并调度复习挑战。
+
+---
+
+### 3. 任务的三大管理与添加途径
+
+#### 途径 A：Web 界面可视化管理与 AI 智能出题（最便捷）
+- 点击任务栏右侧的 **“✨ + 新建 / AI 出题”** 按钮。
+- **AI 智能自适应生成**：输入任意技术方向（如 *LangGraph 状态机死锁防御*、*千万级 Token 降本缓存*、*多模态混合 RAG*），点击「🪄 一键生成」，AI 导师将自动生成符合工业界真实评测标准的 PRD 架构挑战与 Rubrics 标准。
+- **即刻生效**：点击「🚀 立即发布并加入工作台」后，系统自动生成 Week 5、Week 6... 并关联技能图谱与自适应工作台，无需重启服务即可即刻开始挑战！
+
+#### 途径 B：JSON 课程种子文件批量配置（适合新课程体系导入）
+如果您想整体拓展其他职业图谱（例如 **AI 算法工程师**、**AI 全栈开发** 或 **AI 运营**）：
 1. 打开 [`backend/app/seeds/ai_pm_curriculum.json`](./backend/app/seeds/ai_pm_curriculum.json)。
 2. 按照以下格式新增或修改技能节点与实战任务：
    ```json
@@ -225,6 +275,27 @@ curl "http://localhost:8000/api/v1/research/metrics?user_id=usr_demo_01"
    ```powershell
    .\.venv\Scripts\python.exe -c "import sys; sys.path.insert(0, 'backend'); from app.db.init_db import seed_database; seed_database()"
    ```
+
+#### 途径 C：REST API 编程式动态管理（适合 CI/CD 与自动化集成）
+- **AI 出题生成草案**：`POST /api/v1/tasks/ai-generate`
+  ```bash
+  curl -X POST "http://localhost:8000/api/v1/tasks/ai-generate" \
+       -H "Content-Type: application/json" \
+       -d '{"topic": "多模态 Agent 检索与状态机设计", "bloom_level": "CREATE", "difficulty_score": 80.0}'
+  ```
+- **创建并持久化任务**：`POST /api/v1/tasks/`
+  ```bash
+  curl -X POST "http://localhost:8000/api/v1/tasks/" \
+       -H "Content-Type: application/json" \
+       -d '{
+         "title": "多模态 Agent 检索架构设计",
+         "problem_statement": "设计支持图文跨模态检索的工业级 Agent 系统...",
+         "rubrics": "必须包含：1. 多模态对齐；2. 跨模态重排序；3. 缓存策略。",
+         "difficulty_score": 80.0,
+         "bloom_level": "CREATE",
+         "competency_title": "多模态 RAG 与检索增强"
+       }'
+  ```
 
 ---
 

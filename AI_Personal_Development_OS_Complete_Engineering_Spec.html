@@ -326,7 +326,61 @@ class ScaffoldingGuard:
             return "⚠️ **支架能量已用尽**：请独立完成任务并提交评估。", True
         return raw_text, False</code></pre>
 
-    <h2>5. World Model 外部信号与认知隐私安全</h2>
+    <h2>5. 真实任务沙箱、Schema 契约与 REST 接口规范</h2>
+    <div class="grid-2">
+        <div class="card">
+            <h4 style="margin-top:0; color:var(--primary);">Authentic Task 核心契约 Schema</h4>
+            <p style="font-size:8pt;">
+                任务采用真实评估哲学，包含：<code>task_id</code>, <code>week_number</code>, <code>competency_id</code>, <code>bloom_level</code>, <code>difficulty_score</code>, <code>problem_statement</code>, <code>rubrics (JSON)</code> 与 <code>assistance_budget</code>。
+            </p>
+        </div>
+        <div class="card">
+            <h4 style="margin-top:0; color:var(--primary);">AI 动态自适应出题引擎</h4>
+            <p style="font-size:8pt;">
+                支持通过 <code>POST /api/v1/tasks/ai-generate</code> 输入薄弱主题动态生成 Authentic Challenge，并通过 <code>POST /api/v1/tasks/</code> 自动挂载图谱与自增周次。
+            </p>
+        </div>
+    </div>
+
+    <h3>核心 REST API 规范清单</h3>
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 28%;">端点与方法</th>
+                <th style="width: 32%;">主要请求载荷</th>
+                <th style="width: 40%;">功能与响应说明</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><code>GET /api/v1/tasks/</code></td>
+                <td>无</td>
+                <td>获取全量挂载任务列表，按周次升序排列。</td>
+            </tr>
+            <tr>
+                <td><code>POST /api/v1/tasks/ai-generate</code></td>
+                <td><code>{"topic", "bloom_level", ...}</code></td>
+                <td>AI 针对弱项自适应生成结构化 Authentic Task 草案。</td>
+            </tr>
+            <tr>
+                <td><code>POST /api/v1/tasks/</code></td>
+                <td><code>{"title", "problem_statement", ...}</code></td>
+                <td>创建并持久化任务，自动挂载技能节点与自增周次。</td>
+            </tr>
+            <tr>
+                <td><code>POST /api/v1/tasks/submit</code></td>
+                <td><code>{"task_id", "deliverable_content"}</code></td>
+                <td>提交交付物进入沙箱评估，触发 8 态跃迁与证据链上链。</td>
+            </tr>
+            <tr>
+                <td><code>POST /api/v1/sessions/turn</code></td>
+                <td><code>{"user_input", "requested_level"}</code></td>
+                <td>双工作区受控对话，扣减援助能量并触发防包办安全护栏。</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2>6. World Model 外部信号与认知隐私安全</h2>
     <div class="grid-2">
         <div class="card">
             <h4 style="margin-top:0; color:var(--primary);">World Model 信号摄取与 Diff 合并</h4>
@@ -342,7 +396,7 @@ class ScaffoldingGuard:
         </div>
     </div>
 
-    <h2>6. 标杆赛道落地：AI 产品经理 12 周全图谱</h2>
+    <h2>7. 标杆赛道落地：AI 产品经理 12 周全图谱</h2>
     <table>
         <thead>
             <tr>
@@ -394,7 +448,7 @@ class ScaffoldingGuard:
 
     <div class="callout">
         <strong>技术规格就绪声明：</strong>
-        本规范已彻底覆盖所有认知科学模型、FSRS 衰减调度、动机救援、Docker 沙箱评测与 World Model 管道，可直接进入 Phase 1 工程研发。
+        本规范已彻底覆盖所有认知科学模型、FSRS 衰减调度、动机救援、Docker 沙箱评测、任务动态出题与 World Model 管道，可直接进入 Phase 1 工程研发。
     </div>
 
 </body>

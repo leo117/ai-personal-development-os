@@ -364,6 +364,29 @@ class SandboxExecutionEngine:
             return {"status": "TIMEOUT_OR_SYSTEM_ERROR", "error": str(e)}
 ```
 
+### 5.2 真实性任务定义与 Schema 契约 (Authentic Task Schema)
+
+| 字段名称 | 类型 | 作用与含义 |
+| :--- | :--- | :--- |
+| `task_id` | `string` | 任务全局唯一标识符（如 `task_ai_pm_rag_architecture`）。 |
+| `week_number` | `int` | 关联的学习周次或挑战序号（自增，如 Week 1, Week 2...）。 |
+| `competency_id` | `string` | 关联的底层技能节点 ID（如 `ai_pm.rag_architecture`），挂载至技能图谱。 |
+| `title` | `string` | 任务挑战标题（如 *“法律合规文档垂类 RAG 系统架构设计”*）。 |
+| `bloom_level` | `enum` | 布鲁姆认知层级：`UNDERSTAND` / `APPLY` / `ANALYZE` / `EVALUATE` / `CREATE`。 |
+| `difficulty_score`| `float` | 任务难度基准分（0 ~ 100），与学习者的 Elo 能力分动态匹配。 |
+| `problem_statement` | `text` | 详细真实的业务痛点背景、工程约束条件与交付目标。 |
+| `rubrics` | `json` | 严谨的评测契约标准（如：1. 混合检索分块策略；2. 容灾与降级；3. 成本与延迟权衡）。 |
+| `base_assistance_budget`| `int` | 初始支架援助能量点数（默认 100 点）。 |
+
+### 5.3 任务全生命周期与 AI 动态自适应出题管道
+
+```
+[用户/系统触发 AI 动态出题] ──► [LLM/模板生成真实挑战] ──► [自动挂载 Competency 图谱与自增周次]
+                                                                        │
+                                                                        ▼
+[证据链记录与 FSRS 记忆衰减] ◄── [Authentic 评测打分与掌握度跃迁] ◄── [工作台支架陪练与交付物提交]
+```
+
 ---
 
 ## 6. World Model 外部信号摄取与图谱 Diff 合并管道
@@ -409,12 +432,17 @@ World Model 定期监控 ArXiv、GitHub Trending 与权威行业白皮书，通�
 
 ## 9. 前后端接口契约与通信协议
 
-### 9.1 RESTful & SSE 接口标准
+### 9.1 RESTful 生产级核心 API 规范
 
-- `POST /api/v1/sessions/{session_id}/turns`：双工作区受控对话回合。
-- `POST /api/v1/tasks/{task_id}/submissions`：提交产出物进入 Docker 沙箱与 Rubrics 打分。
-- `GET /api/v1/learner/retention-queue`：拉取当前由于 FSRS 衰减需要复习的能力挑战。
-- `POST /api/v1/world-model/apply-diff-patch`：用户确认合并世界模型建议的技能路径变更。
+| 方法与端点 | 请求体/参数 | 核心功能与响应 |
+| :--- | :--- | :--- |
+| `GET /api/v1/tasks/` | 无 | 获取当前所有已挂载任务列表，按周次升序排列。 |
+| `POST /api/v1/tasks/ai-generate` | `{"topic": str, "bloom_level": str, "difficulty_score": float}` | 基于主题或弱项，AI 自适应生成结构化 Authentic Task 草案。 |
+| `POST /api/v1/tasks/` | `{"title": str, "problem_statement": str, "rubrics": str, ...}` | 创建并持久化新任务，自动关联技能节点与自增周次。 |
+| `POST /api/v1/tasks/submit` | `{"task_id": str, "deliverable_content": str, "is_no_ai_mode": bool}` | 提交方案交付物进入沙箱评估，触发 8 态跃迁与证据上链。 |
+| `POST /api/v1/sessions/turn` | `{"user_input": str, "requested_level": int, "current_budget": int}` | 双工作区受控对话，扣减 Assistance Budget 并触发防包办安全护栏。 |
+| `GET /api/v1/competencies/graph` | `?user_id=usr_demo_01` | 获取全局技能树节点掌握度分布与 FSRS 复习预警队列。 |
+| `GET /api/v1/research/metrics` | `?user_id=usr_demo_01` | 获取 ADI 去依赖指数、ICG 能力周增长率与 SCE 支架转化效率。 |
 
 ---
 

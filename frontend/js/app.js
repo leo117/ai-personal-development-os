@@ -4,6 +4,7 @@ import { renderProductionCanvas } from './components/production_canvas.js';
 import { renderCoachConsole } from './components/coach_console.js';
 import { renderCompetencyModal } from './components/competency_radar.js';
 import { renderResearchModal } from './components/research_metrics.js';
+import { renderNewTaskModal } from './components/new_task_modal.js';
 
 // 全局应用状态
 const state = {
@@ -78,11 +79,20 @@ function renderTaskTabs() {
   const tabsContainer = document.getElementById("task-selector-tabs");
   if (!tabsContainer) return;
 
-  tabsContainer.innerHTML = state.tasks.map((t, idx) => `
+  const taskTabsHtml = state.tasks.map((t, idx) => `
     <button class="task-tab ${idx === state.currentTaskIndex ? 'active' : ''}" data-index="${idx}">
-      Week ${t.week_number}: ${t.title.substring(0, 14)}...
+      Week ${t.week_number}: ${t.title.length > 14 ? t.title.substring(0, 14) + '...' : t.title}
     </button>
   `).join("");
+
+  const addBtnHtml = `
+    <button id="open-new-task-btn" class="btn-add-task" title="添加新挑战或通过 AI 智能自适应生成">
+      <span>✨</span>
+      <span>+ 新建 / AI 出题</span>
+    </button>
+  `;
+
+  tabsContainer.innerHTML = taskTabsHtml + addBtnHtml;
 
   tabsContainer.querySelectorAll(".task-tab").forEach(btn => {
     btn.addEventListener("click", () => {
@@ -91,6 +101,9 @@ function renderTaskTabs() {
       renderAll();
     });
   });
+
+  // 绑定打开新建任务弹窗按钮
+  document.getElementById("open-new-task-btn")?.addEventListener("click", openNewTaskModal);
 }
 
 function bindPanelEvents() {
@@ -203,6 +216,144 @@ function bindPanelEvents() {
   });
 }
 
+function openNewTaskModal() {
+  const modal = document.getElementById("new-task-modal");
+  const modalBody = document.getElementById("new-task-modal-body");
+  if (!modal || !modalBody) return;
+
+  modalBody.innerHTML = renderNewTaskModal();
+  modal.classList.add("active");
+
+  // 关闭逻辑
+  const closeModal = () => modal.classList.remove("active");
+  document.getElementById("close-new-task-modal")?.addEventListener("click", closeModal);
+  document.getElementById("cancel-new-task-btn")?.addEventListener("click", closeModal);
+
+  // 模式切换
+  const aiTab = document.getElementById("mode-tab-ai");
+  const manualTab = document.getElementById("mode-tab-manual");
+  const aiSection = document.getElementById("ai-generator-section");
+
+  aiTab?.addEventListener("click", () => {
+    aiTab.classList.add("active");
+    manualTab.classList.remove("active");
+    if (aiSection) aiSection.style.display = "block";
+  });
+
+  manualTab?.addEventListener("click", () => {
+    manualTab.classList.add("active");
+    aiTab.classList.remove("active");
+    if (aiSection) aiSection.style.display = "none";
+  });
+
+  // 预设 Tag 填入
+  document.querySelectorAll(".preset-tag-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const topicInput = document.getElementById("ai-topic-input");
+      if (topicInput) {
+        topicInput.value = btn.dataset.topic;
+        topicInput.focus();
+      }
+    });
+  });
+
+  // AI 一键生成
+  const triggerAiBtn = document.getElementById("ai-generate-trigger-btn");
+  triggerAiBtn?.addEventListener("click", async () => {
+    const topicInput = document.getElementById("ai-topic-input");
+    const topic = topicInput?.value.trim() || "多模态 Agent 检索与状态机设计";
+
+    triggerAiBtn.disabled = true;
+    triggerAiBtn.innerText = "🪄 正在生成中...";
+
+    try {
+      const bloomLevel = document.getElementById("new-task-bloom")?.value || "ANALYZE";
+      const difficulty = parseFloat(document.getElementById("new-task-difficulty")?.value) || 75.0;
+
+      const generated = await api.generateAiTask(topic, bloomLevel, difficulty);
+
+      if (generated) {
+        const titleElem = document.getElementById("new-task-title");
+        const bloomElem = document.getElementById("new-task-bloom");
+        const diffElem = document.getElementById("new-task-difficulty");
+        const compElem = document.getElementById("new-task-comp-title");
+        const probElem = document.getElementById("new-task-problem");
+        const rubElem = document.getElementById("new-task-rubrics");
+
+        if (titleElem) titleElem.value = generated.title || "";
+        if (bloomElem) bloomElem.value = generated.bloom_level || bloomLevel;
+        if (diffElem) diffElem.value = generated.difficulty_score || difficulty;
+        if (compElem) compElem.value = generated.competency_title || "";
+        if (probElem) probElem.value = generated.problem_statement || "";
+        if (rubElem) rubElem.value = generated.rubrics || "";
+      }
+    } catch (e) {
+      alert("AI 生成挑战失败，请检查网络或后端服务。");
+    } finally {
+      triggerAiBtn.disabled = false;
+      triggerAiBtn.innerText = "🪄 一键生成";
+    }
+  });
+
+  // 确认创建并发布
+  const submitCreateBtn = document.getElementById("submit-create-task-btn");
+  submitCreateBtn?.addEventListener("click", async () => {
+    const title = document.getElementById("new-task-title")?.value.trim();
+    const bloomLevel = document.getElementById("new-task-bloom")?.value || "ANALYZE";
+    const difficulty = parseFloat(document.getElementById("new-task-difficulty")?.value) || 75.0;
+    const compTitle = document.getElementById("new-task-comp-title")?.value.trim();
+    const problem = document.getElementById("new-task-problem")?.value.trim();
+    const rubrics = document.getElementById("new-task-rubrics")?.value.trim();
+
+    if (!title || !problem) {
+      alert("请填写挑战标题与问题背景陈述！");
+      return;
+    }
+
+    submitCreateBtn.disabled = true;
+    submitCreateBtn.innerText = "⏳ 正在创建并挂载...";
+
+    try {
+      const resp = await api.createTask({
+        title: title,
+        problem_statement: problem,
+        rubrics: rubrics || "要求具备技术可行性与清晰权衡分析。",
+        difficulty_score: difficulty,
+        bloom_level: bloomLevel,
+        competency_title: compTitle || title
+      });
+
+      if (resp.status === "SUCCESS") {
+        closeModal();
+
+        // 重新获取任务与技能图谱
+        state.tasks = await api.getTasks();
+        state.graphData = await api.getCompetencyGraph();
+        
+        // 自动高亮并切换到刚创建的新任务
+        state.currentTaskIndex = state.tasks.length - 1;
+        state.currentBudget = 100;
+
+        // 插入欢迎引导语
+        state.messages = [
+          {
+            role: "ai",
+            text: `🎯 全新挑战「Week ${resp.task.week_number}: ${resp.task.title}」已载入！我已就绪，请阅读左侧真实业务痛点，开始撰写方案。`,
+            is_guarded: false
+          }
+        ];
+
+        renderAll();
+      }
+    } catch (e) {
+      alert("创建任务失败，请检查后端服务。");
+    } finally {
+      submitCreateBtn.disabled = false;
+      submitCreateBtn.innerText = "🚀 立即发布并加入工作台";
+    }
+  });
+}
+
 function bindGlobalEvents() {
   // 雷达图 Modal
   const radarBtn = document.getElementById("open-radar-btn");
@@ -237,3 +388,4 @@ function bindGlobalEvents() {
 
 // 启动应用
 document.addEventListener("DOMContentLoaded", init);
+

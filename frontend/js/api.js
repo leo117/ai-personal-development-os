@@ -52,5 +52,29 @@ export const api = {
       console.error("Failed to fetch research metrics", e);
       return null;
     }
+  },
+
+  // AI 智能出题生成任务草案
+  async generateAiTask(topic, bloomLevel = "ANALYZE", difficultyScore = 70.0) {
+    const res = await fetch(`${API_BASE}/tasks/ai-generate`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        topic: topic,
+        bloom_level: bloomLevel,
+        difficulty_score: difficultyScore
+      })
+    });
+    return await res.json();
+  },
+
+  // 创建并持久化新任务
+  async createTask(payload) {
+    const res = await fetch(`${API_BASE}/tasks/`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+    return await res.json();
   }
 };
